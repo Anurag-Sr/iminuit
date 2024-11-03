@@ -8,12 +8,12 @@ class PDF(object):
     python
     """
 
-    def __init__(self, limits):
+    def __init__(self, XRange):
         """
         initialises limits and mass for this class
         """
         
-        self.XMIN, self.XMAX = limits
+        self.XMIN, self.XMAX = XRange
         self.mass = []
 
     def integrate(self, XRange):
@@ -39,7 +39,9 @@ class Gaussian(PDF):
     """
 
     def __init__(self, mean, sigma, cut = 0.0, XRange = (0, 10)):
-
+        
+        super().__init__(XRange)
+        
         self.mean = mean
         self.sigma = sigma
         self.cut = cut
@@ -88,6 +90,8 @@ class Exponential(PDF):
     """
 
     def __init__(self, decay_constant, XRange = (0,10)):
+        
+        super().__init__(XRange)
 
         self.decay_constant = decay_constant
         self.mass = []
@@ -133,6 +137,8 @@ class Linear(PDF):
     """
 
     def __init__(self, slope, XRange = (0,10)):
+        
+        super().__init__(XRange)
 
         self.slope = slope
         self.mass = []
@@ -188,6 +194,8 @@ class Polynomial(PDF):
     """
 
     def __init__(self, a, b, c, XRange = (0,10)):
+        
+        super().__init__(XRange)
 
         # Initialise class variables
         self.a = a
@@ -254,6 +262,8 @@ class Flat(PDF):
     """
 
     def __init__(self, y_int, XRange = (0,10)):
+        
+        super().__init__(XRange)
 
         self.y_int = y_int
         self.XMIN, self.XMAX = XRange
@@ -310,6 +320,8 @@ class harmonic_decay(PDF):
 
         # Initialises all the variables used in the class, range is set by default to (0,10)
         
+        super().__init__(XRange)
+
         self.XMIN, self.XMAX = XRange = (0,10)
         self.tau = tau
         self.delta_mass = delta_mass
