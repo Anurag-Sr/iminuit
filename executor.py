@@ -3,8 +3,6 @@ import classes
 import numpy as np
 import matplotlib.pyplot as plt
 from iminuit import Minuit # type: ignore
-import argparse
-import logging
 import definitions
 
 points  = 50000
