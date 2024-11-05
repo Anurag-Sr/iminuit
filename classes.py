@@ -5,7 +5,7 @@ from scipy import integrate
 class PDF(object):
     """
     Parent class pdf object. Implemenst the integrate and Mass definitions.
-    This is not stictly necessary but was part of me exploring classes in 
+    This is  stictly necessary but was part of me exploring classes in
     python
     """
 
@@ -23,7 +23,7 @@ class PDF(object):
         """
 
         XMIN, XMAX = XRange
-        integral, _ = integrate.quad(self.evaluate, XMIN, XMAX) 
+        integral, _ = integrate.quad(self.evaluate, XMIN, XMAX)
         return integral
 
     def Mass(self,):
@@ -62,7 +62,7 @@ class Gaussian(PDF):
 
     def evaluate(self, x):
         """
-        evaluates the gaussian function note this is normalised
+        evaluates the gaussian function e this is normalised
         """
 
         return np.exp(-(x - self.mean)**2 / (2.0 * self.sigma**2))
@@ -80,9 +80,9 @@ class Gaussian(PDF):
         """
         Sets parameters passed. Mainly used for negative loglikelihood statistics where we want to vary the parameters.
         """
-        if not mean == None:
+        if mean is not None:
             self.mean = mean
-        if not sigma == None:
+        if sigma is not None:
             self.sigma = sigma
 
 
@@ -91,7 +91,7 @@ class Exponential(PDF):
     Class to generate an object with an exponential decay (for background)
     """
 
-    def __init__(self, decay_constant, XRange=(0,10)):
+    def __init__(self, decay_constant, XRange=(0, 10)):
         super().__init__(XRange)
 
         self.decay_constant = decay_constant
@@ -119,7 +119,7 @@ class Exponential(PDF):
 
     def evaluate(self, x):
         """
-        evaluates exponential function. This is not normalised to the range
+        evaluates exponential function. This is  normalised to the range
         """
 
         return np.exp(-x / self.decay_constant)
@@ -129,7 +129,7 @@ class Exponential(PDF):
         Sets parameters passed. Mainly used for negative log ikelihood statistics where we want to vary the parameters.
         """
 
-        if not decay_constant == None:
+        if decay_constant is not None:
             self.decay_constant = decay_constant
 
 
@@ -138,7 +138,7 @@ class Linear(PDF):
     Class for the linear function PDF
     """
 
-    def __init__(self, slope, XRange=(0,10)):
+    def __init__(self, slope, XRange=(0, 10)):
 
         super().__init__(XRange)
 
@@ -146,7 +146,7 @@ class Linear(PDF):
         self.mass = []
         self.XMIN, self.XMAX = XRange
         # maximum of a linear function
-        self.max= self.find_maximum()
+        self.max = self.find_maximum()
 
     def find_maximum(self,):
         """
@@ -166,13 +166,13 @@ class Linear(PDF):
 
     def next(self):
         """
-        Function to draw random x values 
+        Function to draw random x values
         """
 
         while True:
             # Generate uniform random numbers within limits
             x = np.random.uniform(self.XMIN, self.XMAX)
-            # evaluate corresponding y value for each x 
+            # evaluate corresponding y value for each x
             y1 = self.evaluate(x)
             # generate random uniform distribution of y values with max y of function
             y2 = np.random.uniform(0, self.max)
@@ -186,7 +186,7 @@ class Linear(PDF):
         """
         to set passed parameters
         """
-        if not slope == None:
+        if slope is not None:
             self.slope = slope
 
 
@@ -195,7 +195,7 @@ class Polynomial(PDF):
     seecond order polynomial class
     """
 
-    def __init__(self, a, b, c, XRange=(0,10)):
+    def __init__(self, a, b, c, XRange=(0, 10)):
 
         super().__init__(XRange)
 
@@ -226,18 +226,18 @@ class Polynomial(PDF):
 
     def next(self):
         """
-        Function to draw random x values 
+        Function to draw random x values
         """
 
         while True:
             # Generate uniform random numbers within limits
             x = np.random.uniform(self.XMIN, self.XMAX)
-            # evaluate corresponding y value for each x 
+            # evaluate corresponding y value for each x
             y1 = self.evaluate(x)
             # generate random uniform distribution of y values with max y of function
             y2 = np.random.uniform(0, self.max)
             # accept x value if y1<y2
-            if (y2<y1):
+            if (y2 < y1):
                 filtered_x = x
                 self.mass.append(filtered_x)
                 return filtered_x
@@ -247,18 +247,18 @@ class Polynomial(PDF):
         Sets parameters passed. Mainly used for negative loglikelihood statistics where we want to vary the parameters.
         """
 
-        if not a == None:
-            self.a= a
-        if not b == None:
-            self.b = b 
-        if not c == None:
+        if a is not None:
+            self.a = a
+        if b is not None:
+            self.b = b
+        if c is not None:
             self.c = c
 
 
 class Flat(PDF):
 
     """
-    generates events for background flat function using np.random.uniform 
+    generates events for background flat function using np.random.uniform
     (modified copy of linear function from week 8)
     """
 
@@ -286,7 +286,7 @@ class Flat(PDF):
         evaluates flat function
         """
 
-        return np.array(self.y_int)  
+        return np.array(self.y_int)
 
     def next(self,):
         """
@@ -308,17 +308,17 @@ class Flat(PDF):
         Sets parameters passed. Mainly used for negative loglikelihood statistics where we want to vary the parameters.
         """
 
-        if not y_int == None:
+        if y_int is not None:
             self.y_int = y_int
 
 
 class harmonic_decay(PDF):
     """
-    Class that would generate an PDF with a randomly generated dataset of n points according to the 
+    Class that would generate an PDF with a randomly generated dataset of n points according to the
     harmonic decay function
     """
 
-    def __init__(self, tau, delta_mass, V, XRange=(0,10)):
+    def __init__(self, tau, delta_mass, V, XRange=(0, 10)):
 
         # Initialises all the variables used in the class, range is set by default to (0,10)
 
@@ -345,10 +345,10 @@ class harmonic_decay(PDF):
     def evaluate(self, t,):
         """
         Evaluates the harmonic decay function. This function is used in integrate and next to execute
-        the necessary steps. Note this is not normalised
+        the necessary steps. e this is  normalised
         """
 
-        return (1 + self.V*np.sin(self.delta_mass * t)) * np.exp(-t / self.tau)
+        return (1 + self.V * np.sin(self.delta_mass * t)) * np.exp(-t / self.tau)
 
     def next(self,):
         """
@@ -359,23 +359,23 @@ class harmonic_decay(PDF):
             y = self.evaluate(x,)
             y_points = np.random.uniform(self.XMIN, self.max, )
 
-            # accept points based of the conditions of the box method. 
+            # accept points based of the conditions of the box method.
             if (y_points <= y):
                 self.mass.append(x)
                 return (x, y_points)
 
     def params(self, tau=None, delta_mass=None, V=None):
         """
-        This function is used to set the parameters passed through the PDF. 
-        Mainly used during negative log likelihood fitting where we try to 
-        fit the data by varrying 1 or more parameters. 
+        This function is used to set the parameters passed through the PDF.
+        Mainly used during negative log likelihood fitting where we try to
+        fit the data by varrying 1 or more parameters.
 
-        If the parameter is not passed it is set to the default value
+        If the parameter is  passed it is set to the default value
         """
 
-        if not tau == None:
+        if tau is not None:
             self.tau = tau
-        if not delta_mass == None:
+        if delta_mass is not None:
             self.delta_mass = delta_mass
-        if not V == None:
+        if V is not None:
             self.V = V
