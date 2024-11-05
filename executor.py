@@ -34,10 +34,10 @@ def gaussian(
 
     vals = np.linspace(0, 10, 100, endpoint=True)
     fit = pdf.evaluate(vals) / pdf.integrate((pdf.XMIN, pdf.XMAX))
-    plt.hist(data, BINS, label="generated dataset", alpha=0.3, density=True) 
+    plt.hist(data, BINS, label="generated dataset", alpha=0.3, density=True)
     plt.plot(vals, fit, linestyle="--", color="red", alpha=0.7, label="optimum Fit")
-    plt.plot(x, pdf.evaluate(x)/pdf.integrate((pdf.XMIN, pdf.XMAX)), label='fit')
-    plt.xlim(0,3)
+    plt.plot(x, pdf.evaluate(x) / pdf.integrate((pdf.XMIN, pdf.XMAX)), label='fit')
+    plt.xlim(0, 3)
     plt.xlabel("Mass")
     plt.ylabel("events")
     plt.title("Gaussian dataset")
@@ -65,8 +65,8 @@ def exponential(decay_constant: float) -> None:
 
     vals = np.linspace(0, 10, 100, endpoint=True)
     fit = pdf.evaluate(vals) / pdf.integrate((pdf.XMIN, pdf.XMAX))
-    plt.hist(data, BINS, label="Data", alpha=0.3, density=True) 
-    plt.plot(x, pdf.evaluate(x)/pdf.integrate((pdf.XMIN, pdf.XMAX)), label='fit')
+    plt.hist(data, BINS, label="Data", alpha=0.3, density=True)
+    plt.plot(x, pdf.evaluate(x) / pdf.integrate((pdf.XMIN, pdf.XMAX)), label='fit')
     plt.plot(vals, fit, linestyle="--", color="red", alpha=0.7, label="optimum Fit")
     plt.xlim(pdf.XMIN, pdf.XMAX)
     plt.xlabel("Mass")
@@ -96,8 +96,8 @@ def linear(slope: float) -> None:
 
     vals = np.linspace(0, 10, 100, endpoint=True)
     fit = pdf.evaluate(vals) / pdf.integrate((pdf.XMIN, pdf.XMAX))
-    plt.plot(x, pdf.evaluate(x)/pdf.integrate((pdf.XMIN, pdf.XMAX)), label='fit')
-    plt.hist(data, BINS, label="Data", alpha=0.3, density=True) 
+    plt.plot(x, pdf.evaluate(x) / pdf.integrate((pdf.XMIN, pdf.XMAX)), label='fit')
+    plt.hist(data, BINS, label="Data", alpha=0.3, density=True)
     plt.plot(vals, fit, linestyle="--", color="red", alpha=0.7, label="optimum Fit")
     plt.xlim(pdf.XMIN, pdf.XMAX)
     plt.xlabel("Mass")
@@ -115,7 +115,7 @@ def main():
     if options.dist == "expo":
         exponential(float(options.decay))
     elif options.dist == "Gauss":
-        gaussian(float(options.mean),float(options.std))
+        gaussian(float(options.mean), float(options.std))
     elif options.dist == "Lin":
         linear(float(options.slope))
     else:
