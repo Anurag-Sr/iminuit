@@ -1,6 +1,7 @@
 import numpy as np
 from scipy import integrate
 
+
 class PDF(object):
     """
     Parent class pdf object. Implemenst the integrate and Mass definitions.
@@ -12,7 +13,7 @@ class PDF(object):
         """
         initialises limits and mass for this class
         """
-        
+
         self.XMIN, self.XMAX = XRange
         self.mass = []
 
@@ -20,11 +21,11 @@ class PDF(object):
         """
         uses scipy.integrate.quad to evaluate and returns the integral value
         """
-    
+
         XMIN, XMAX = XRange
         integral, _ = integrate.quad(self.evaluate, XMIN, XMAX) 
         return integral
-    
+
     def Mass(self,):
         """
         Return numpy array containing all generated values
@@ -38,10 +39,10 @@ class Gaussian(PDF):
     class to generate random signal with gaussian shape
     """
 
-    def __init__(self, mean, sigma, cut = 0.0, XRange = (0, 10)):
-        
+    def __init__(self, mean, sigma, cut=0.0, XRange=(0, 10)):
+
         super().__init__(XRange)
-        
+
         self.mean = mean
         self.sigma = sigma
         self.cut = cut
@@ -83,6 +84,7 @@ class Gaussian(PDF):
             self.mean = mean 
         if not sigma == None:
             self.sigma = sigma
+
 
 class Exponential(PDF):
     """
