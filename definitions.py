@@ -2,7 +2,7 @@ import argparse
 import logging
 
 
-def parser():
+def parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
     parser.add_argument("-d", "--dist", help="distribution type")
     parser.add_argument("-m", "--mean", help="mean")
@@ -13,7 +13,7 @@ def parser():
     return parser
 
 
-def logger():
+def logger() -> logging.Logger:
     # Create and configure logger
     logging.basicConfig(filename="newfile.log",
                         format='%(asctime)s %(message)s')
@@ -23,4 +23,5 @@ def logger():
 
     # Setting the threshold of logger to INFO
     logger.setLevel(logging.INFO)
+
     return logger

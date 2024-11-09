@@ -1,0 +1,6 @@
+[flake8]
+# Line length as in Black
+max-line-length = 150
+require-plugins = flake8-annotations,flake8-import-order
+# do not enforce removing whitespace before ,;: (incompatible with Black, which does it better).
+ignore = E203, ANN101

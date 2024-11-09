@@ -1,4 +1,5 @@
 import numpy as np
+
 from scipy import integrate
 
 
@@ -9,7 +10,7 @@ class PDF(object):
     python
     """
 
-    def __init__(self, XRange):
+    def __init__(self, XRange: tuple) -> None:
         """
         initialises limits and mass for this class
         """
@@ -17,7 +18,7 @@ class PDF(object):
         self.XMIN, self.XMAX = XRange
         self.mass = []
 
-    def integrate(self, XRange):
+    def integrate(self, XRange: tuple) -> float:
         """
         uses scipy.integrate.quad to evaluate and returns the integral value
         """
@@ -26,7 +27,7 @@ class PDF(object):
         integral, _ = integrate.quad(self.evaluate, XMIN, XMAX)
         return integral
 
-    def Mass(self,):
+    def Mass(self) -> np.ndarray:
         """
         Return numpy array containing all generated values
         """
@@ -39,7 +40,11 @@ class Gaussian(PDF):
     class to generate random signal with gaussian shape
     """
 
-    def __init__(self, mean, sigma, cut=0.0, XRange=(0, 10)):
+    def __init__(self,
+                 mean: float,
+                 sigma: float,
+                 cut: float = 0.0,
+                 XRange: tuple = (-10, 10)) -> None:
 
         super().__init__(XRange)
 
@@ -51,23 +56,28 @@ class Gaussian(PDF):
         # Find maximum value of the gaussian function
         self.max = self.find_maximum()
 
-    def find_maximum(self,):
+    def find_maximum(self) -> float:
         """
         Returns maximum value of the function
         """
         # create a grid of 10000 points that will be used to compute and return the maximum
-        x = np.linspace(self.XMIN, self.XMAX, num=10000, endpoint=True,)
+        x = np.linspace(
+            self.XMIN,
+            self.XMAX,
+            num=10000,
+            endpoint=True,
+        )
         y = self.evaluate(x)
         return y.max()
 
-    def evaluate(self, x):
+    def evaluate(self, x: np.ndarray) -> np.ndarray:
         """
         evaluates the gaussian function e this is normalised
         """
 
-        return np.exp(-(x - self.mean)**2 / (2.0 * self.sigma**2))
+        return np.exp(-((x - self.mean) ** 2) / (2.0 * self.sigma**2))
 
-    def next(self):
+    def next(self) -> np.ndarray:
         """
         generates gaussian values of x for signal using np.random.normal
         """
@@ -76,7 +86,7 @@ class Gaussian(PDF):
         self.mass.append(x)
         return x
 
-    def params(self, mean=None, sigma=None):
+    def params(self, mean: float = None, sigma: float = None) -> None:
         """
         Sets parameters passed. Mainly used for negative loglikelihood statistics where we want to vary the parameters.
         """
@@ -91,7 +101,8 @@ class Exponential(PDF):
     Class to generate an object with an exponential decay (for background)
     """
 
-    def __init__(self, decay_constant, XRange=(0, 10)):
+    def __init__(self, decay_constant: float, XRange: tuple = (0, 10)) -> None:
+
         super().__init__(XRange)
 
         self.decay_constant = decay_constant
@@ -99,16 +110,21 @@ class Exponential(PDF):
         self.XMIN, self.XMAX = XRange
         self.max = self.find_maximum()
 
-    def find_maximum(self,):
+    def find_maximum(self) -> float:
         """
         Returns maximum value of the function
         """
         # create a grid of 10000 points that will be used to compute and return the maximum
-        x = np.linspace(self.XMIN, self.XMAX, num=10000, endpoint=True,)
+        x = np.linspace(
+            self.XMIN,
+            self.XMAX,
+            num=10000,
+            endpoint=True,
+        )
         y = self.evaluate(x)
         return y.max()
 
-    def next(self,):
+    def next(self) -> np.ndarray:
         """
         generates points according to the required background fraction. This uses the numpy.random.exponential method
         """
@@ -117,14 +133,14 @@ class Exponential(PDF):
         self.mass.append(x)
         return x
 
-    def evaluate(self, x):
+    def evaluate(self, x: np.ndarray) -> np.ndarray:
         """
         evaluates exponential function. This is  normalised to the range
         """
 
         return np.exp(-x / self.decay_constant)
 
-    def params(self, decay_constant=None):
+    def params(self, decay_constant: float = None) -> None:
         """
         Sets parameters passed. Mainly used for negative log ikelihood statistics where we want to vary the parameters.
         """
@@ -138,7 +154,7 @@ class Linear(PDF):
     Class for the linear function PDF
     """
 
-    def __init__(self, slope, XRange=(0, 10)):
+    def __init__(self, slope: float, XRange: tuple = (0, 10)) -> None:
 
         super().__init__(XRange)
 
@@ -148,23 +164,28 @@ class Linear(PDF):
         # maximum of a linear function
         self.max = self.find_maximum()
 
-    def find_maximum(self,):
+    def find_maximum(self) -> float:
         """
         Returns maximum value of the function
         """
         # create a grid of 10000 points that will be used to compute and return the maximum
-        x = np.linspace(self.XMIN, self.XMAX, num=10000, endpoint=True,)
+        x = np.linspace(
+            self.XMIN,
+            self.XMAX,
+            num=10000,
+            endpoint=True,
+        )
         y = self.evaluate(x)
         return y.max()
 
-    def evaluate(self, x):
+    def evaluate(self, x: np.ndarray) -> np.ndarray:
         """
         evaluates the linear function. This is normalised to the checkpoint
         """
 
-        return (1.0 + self.slope * x)
+        return 1.0 + self.slope * x
 
-    def next(self):
+    def next(self) -> np.ndarray:
         """
         Function to draw random x values
         """
@@ -177,12 +198,12 @@ class Linear(PDF):
             # generate random uniform distribution of y values with max y of function
             y2 = np.random.uniform(0, self.max)
             # accept x value if y1<y2
-            if (y2 < y1):
+            if y2 < y1:
                 filtered_x = x
                 self.mass.append(filtered_x)
                 return filtered_x
 
-    def params(self, slope=None):
+    def params(self, slope: float = None) -> None:
         """
         to set passed parameters
         """
@@ -195,7 +216,9 @@ class Polynomial(PDF):
     seecond order polynomial class
     """
 
-    def __init__(self, a, b, c, XRange=(0, 10)):
+    def __init__(
+        self, a: float, b: float, c: float, XRange: tuple = (0, 10)
+    ) -> None:
 
         super().__init__(XRange)
 
@@ -208,23 +231,28 @@ class Polynomial(PDF):
         # Find maximum value of the gaussian function
         self.max = self.find_maximum()
 
-    def find_maximum(self,):
+    def find_maximum(self) -> float:
         """
         Returns maximum value of the function
         """
         # create a grid of 10000 points that will be used to compute and return the maximum
-        x = np.linspace(self.XMIN, self.XMAX, num=10000, endpoint=True,)
+        x = np.linspace(
+            self.XMIN,
+            self.XMAX,
+            num=10000,
+            endpoint=True,
+        )
         y = self.evaluate(x)
         return y.max()
 
-    def evaluate(self, x,):
+    def evaluate(self, x: np.ndarray) -> np.ndarray:
         """
         Evaluates the quadratic polynomial.
         """
 
-        return (self.a + self.b * x + self.c * x**2)
+        return self.a + self.b * x + self.c * x**2
 
-    def next(self):
+    def next(self) -> np.ndarray:
         """
         Function to draw random x values
         """
@@ -237,12 +265,12 @@ class Polynomial(PDF):
             # generate random uniform distribution of y values with max y of function
             y2 = np.random.uniform(0, self.max)
             # accept x value if y1<y2
-            if (y2 < y1):
+            if y2 < y1:
                 filtered_x = x
                 self.mass.append(filtered_x)
                 return filtered_x
 
-    def params(self, a=None, b=None, c=None):
+    def params(self, a: float = None, b: float = None, c: float = None) -> None:
         """
         Sets parameters passed. Mainly used for negative loglikelihood statistics where we want to vary the parameters.
         """
@@ -256,13 +284,12 @@ class Polynomial(PDF):
 
 
 class Flat(PDF):
-
     """
     generates events for background flat function using np.random.uniform
     (modified copy of linear function from week 8)
     """
 
-    def __init__(self, y_int, XRange=(0, 10)):
+    def __init__(self, y_int: float, XRange: tuple = (0, 10)) -> None:
 
         super().__init__(XRange)
 
@@ -272,23 +299,28 @@ class Flat(PDF):
         # Find maximum value of the distribution within the bounds
         self.max_val = self.find_maximum()
 
-    def find_maximum(self,):
+    def find_maximum(self) -> float:
         """
         Returns maximum value of the function
         """
         # create a grid of 10000 points that will be used to compute and return the maximum
-        x = np.linspace(self.XMIN, self.XMAX, num=10000, endpoint=True,)
+        x = np.linspace(
+            self.XMIN,
+            self.XMAX,
+            num=10000,
+            endpoint=True,
+        )
         y = self.evaluate(x)
         return y.max()
 
-    def evaluate(self, x,):
+    def evaluate(self) -> np.ndarray:
         """
         evaluates flat function
         """
 
         return np.array(self.y_int)
 
-    def next(self,):
+    def next(self) -> np.ndarray:
         """
         uses same principle as described in week 8 to generate events
         unlike gaussian this uses np.random.uniform
@@ -298,12 +330,12 @@ class Flat(PDF):
             x = np.random.uniform(self.XMIN, self.XMAX)
             y1 = self.evaluate(x)
             y2 = np.random.uniform(0, self.max_val)
-            if (y2 < y1):
+            if y2 < y1:
                 filtered_x = x
                 self.mass.append(filtered_x)
                 return filtered_x
 
-    def params(self, y_int=None):
+    def params(self, y_int: float = None) -> None:
         """
         Sets parameters passed. Mainly used for negative loglikelihood statistics where we want to vary the parameters.
         """
@@ -318,7 +350,9 @@ class harmonic_decay(PDF):
     harmonic decay function
     """
 
-    def __init__(self, tau, delta_mass, V, XRange=(0, 10)):
+    def __init__(
+        self, tau: float, delta_mass: float, V: float, XRange: tuple = (0, 10)
+    ) -> None:
 
         # Initialises all the variables used in the class, range is set by default to (0,10)
 
@@ -333,16 +367,21 @@ class harmonic_decay(PDF):
         # find maximum of the function in the range provided
         self.max = self.find_maximum()
 
-    def find_maximum(self,):
+    def find_maximum(self) -> float:
         """
         Returns maximum value of the function
         """
         # create a grid of 10000 points that will be used to compute and return the maximum
-        x = np.linspace(self.XMIN, self.XMAX, num=10000, endpoint=True,)
+        x = np.linspace(
+            self.XMIN,
+            self.XMAX,
+            num=10000,
+            endpoint=True,
+        )
         y = self.evaluate(x)
         return y.max()
 
-    def evaluate(self, t,):
+    def evaluate(self, t: np.ndarray) -> np.ndarray:
         """
         Evaluates the harmonic decay function. This function is used in integrate and next to execute
         the necessary steps. e this is  normalised
@@ -350,21 +389,28 @@ class harmonic_decay(PDF):
 
         return (1 + self.V * np.sin(self.delta_mass * t)) * np.exp(-t / self.tau)
 
-    def next(self,):
+    def next(self) -> np.ndarray:
         """
         This function generates a set of n points and appends them to the mass list. The box method is used to generate the points.
         """
         while True:
             x = np.random.uniform(self.XMIN, self.XMAX)
-            y = self.evaluate(x,)
-            y_points = np.random.uniform(self.XMIN, self.max, )
+            y = self.evaluate(
+                x,
+            )
+            y_points = np.random.uniform(
+                self.XMIN,
+                self.max,
+            )
 
             # accept points based of the conditions of the box method.
-            if (y_points <= y):
+            if y_points <= y:
                 self.mass.append(x)
                 return (x, y_points)
 
-    def params(self, tau=None, delta_mass=None, V=None):
+    def params(
+        self, tau: float = None, delta_mass: float = None, V: float = None
+    ) -> None:
         """
         This function is used to set the parameters passed through the PDF.
         Mainly used during negative log likelihood fitting where we try to
